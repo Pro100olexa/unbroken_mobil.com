@@ -502,6 +502,30 @@
             .footer-bottom { flex-direction:row; text-align:left; }
             .sticky-cta { display:none; }
         }
+
+        .product-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .product-details.show {
+            max-height: 200px;
+            background: var(--accent);
+            text-align: center;
+            color: #1a1c18;
+            font-family:'Unbounded',sans-serif; font-size:8px; font-weight:700;
+            letter-spacing:0.01em; text-transform:uppercase;
+            line-height: 1.5;
+        }
+        .toggle-btn {
+            display:inline-block; margin-top:0.75rem;
+            font-family:'Unbounded',sans-serif; font-size:0.54rem; font-weight:700;
+            letter-spacing:0.1em; text-transform:uppercase;
+            color:var(--charcoal); background:var(--accent);
+            padding:0.38rem 0.75rem; border:none; cursor:pointer;
+            -webkit-tap-highlight-color:transparent; align-self:flex-start;
+
+        }
     </style>
 </head>
 <body>
@@ -627,7 +651,10 @@
                 <div class="product-category">Верхній одяг</div>
                 <div class="product-name">Адаптивна термобілизна</div>
                 <div class="product-features"><span class="product-tag">Velcro</span><span class="product-tag">Змінний рукав</span><span class="product-tag">Комплект</span></div>
-                <button class="product-cta">Детальніше →</button>
+                <div class="product-details">
+                    Адаптивна термобілизна з плоскими швами та гіпоалергенним мікрофлісом підтримує оптимальну температуру тіла та забезпечує безперешкодний доступ до медичних портів через спеціальні еластичні клапани                </div>
+
+                <button class="toggle-btn">Детальніше →</button>
             </div>
             <div class="product-overlay"><button class="overlay-btn">Детальніше</button></div>
         </div>
@@ -649,7 +676,11 @@
                 <div class="product-category">Верхній одяг</div>
                 <div class="product-name">Адаптивний світшот</div>
                 <div class="product-features"><span class="product-tag">Катетер-порт</span><span class="product-tag">Полегш. надягання</span><span class="product-tag">Антибакт.</span></div>
-                <button class="product-cta">Детальніше →</button>
+                <div class="product-details">
+                    Адаптивний світшот із катетер-портами на застібках та розширеною горловиною виготовлений із м’якого антибактеріального трикотажу для комфортної реабілітації та легкого надягання
+                </div>
+
+                <button class="toggle-btn">Детальніше →</button>
             </div>
             <div class="product-overlay"><button class="overlay-btn">Детальніше</button></div>
         </div>
@@ -670,9 +701,30 @@
             <div class="product-info">
                 <div class="product-category">Реабілітаційний одяг</div>
                 <div class="product-name">Адаптивні штани</div>
-                <div class="product-features"><span class="product-tag">Відкр. бічний шов</span><span class="product-tag">Еластик. пояс</span><span class="product-tag">Легкий матеріал</span></div>
-                <button class="product-cta" onclick="alert('Товар відкрито!')">Детальніше →</button>
+                <div class="product-features">
+                    <span class="product-tag">Відкр. бічний шов</span>
+                    <span class="product-tag">Еластик. пояс</span>
+                    <span class="product-tag">Легкий матеріал</span>
+                </div>
+
+                <!-- Деталі -->
+                <div class="product-details">
+                    Ці штани зручні для людей з обмеженою рухливістю. Мають м’який еластичний пояс та відкритий бічний шов.
+                </div>
+
+                <button class="toggle-btn">Детальніше →</button>
             </div>
+
+
+            <script>
+                document.querySelectorAll('.toggle-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const details = btn.previousElementSibling; // дивимося на product-details
+                        details.classList.toggle('show');
+                    });
+                });
+            </script>
+
             <div class="product-overlay"><button class="overlay-btn">Детальніше</button></div>
         </div>
     </div>
