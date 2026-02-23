@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>АДАПТИВ — Одяг для захисників України</title>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;800;900&family=Raleway:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --olive: #4a5240;
+            --olive-dark: #2d3228;
+            --olive-light: #7a8a6a;
+            --sand: #c8b89a;
+            --sand-light: #e8ddd0;
+            --cream: #f5f0e8;
+            --accent: #d4862a;
+            --white: #fafaf8;
+            --charcoal: #1a1c18;
+            --muted: #6b7060;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Raleway', sans-serif;
+            background: var(--charcoal);
+            color: var(--cream);
+            overflow-x: hidden;
+            padding-bottom: 56px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.4;
+        }
+
+        /* NAV */
+        nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(26,28,24,0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(200,184,154,0.12);
+            transition: padding 0.3s;
+        }
+
+        .nav-logo {
+            font-family: 'Unbounded', sans-serif;
+            font-weight: 900;
+            font-size: 1.15rem;
+            letter-spacing: 0.1em;
+            color: var(--sand);
+            text-decoration: none;
+        }
+        .nav-logo span { color: var(--accent); }
+
+        .nav-links { display: none; }
+        .nav-cta { display: none; }
+
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 6px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .hamburger span { display: block; width: 24px; height: 2px; background: var(--sand-light); transition: all 0.3s; }
+        .hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        /* MOBILE NAV */
+        .mobile-nav {
+            position: fixed; inset: 0;
+            background: var(--charcoal);
+            z-index: 200;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 1.8rem;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.77,0,0.175,1);
+        }
+        .mobile-nav.open { transform: translateX(0); }
+        .mobile-nav a {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 1.35rem; font-weight: 700;
+            color: var(--sand-light); text-decoration: none;
+            letter-spacing: 0.05em; text-transform: uppercase;
+        }
+        .mobile-nav-close {
+            position: absolute; top: 1.2rem; right: 1.5rem;
+            font-size: 1.8rem; cursor: pointer;
+            background: none; border: none; color: var(--sand-light);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .mobile-nav-cta {
+            font-size: 0.8rem !important;
+            color: var(--charcoal) !important;
+            background: var(--accent);
+            padding: 0.9rem 2.5rem;
+            margin-top: 0.5rem;
+        }
+
+        /* HERO */
+        .hero { display: flex; flex-direction: column; min-height: 100svh; }
+
+        .hero-right {
+            background: var(--olive-dark);
+            height: 260px;
+            position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .hero-bg-pattern {
+            position: absolute; inset: 0;
+            background: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(74,82,64,0.15) 30px, rgba(74,82,64,0.15) 31px);
+        }
+
+        .hero-illustration {
+            width: 130px; position: relative; z-index: 2;
+            opacity: 0; animation: fadeIn 1.2s 0.5s forwards;
+        }
+
+        .hero-stats-row {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            display: flex;
+            background: rgba(26,28,24,0.75); backdrop-filter: blur(8px);
+        }
+        .hero-stat-item {
+            flex: 1; padding: 0.65rem 0.5rem; text-align: center;
+            border-right: 1px solid rgba(200,184,154,0.1);
+        }
+        .hero-stat-item:last-child { border-right: none; }
+        .stat-num-small {
+            font-family: 'Unbounded', sans-serif;
+            font-size: 1rem; font-weight: 900; color: var(--accent);
+            display: block; line-height: 1;
+        }
+        .stat-label-small {
+            font-size: 0.5rem; letter-spacing: 0.06em; text-transform: uppercase;
+            color: var(--sand-light); opacity: 0.7; display: block; margin-top: 0.2rem;
+        }
+
+        .hero-left {
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: center;
+            padding: 2.5rem 1.5rem 2rem;
+            position: relative; z-index: 2;
+        }
+
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            font-size: 0.62rem; font-weight: 500; letter-spacing: 0.18em;
+            text-transform: uppercase; color: var(--accent);
+            border: 1px solid rgba(212,134,42,0.4);
+            padding: 0.35rem 0.85rem; margin-bottom: 1.2rem; width: fit-content;
+            opacity: 0; animation: fadeSlideUp 0.8s 0.2s forwards;
+        }
+        .hero-badge::before {
+            content:''; width:6px; height:6px; background:var(--accent);
+            border-radius:50%; animation:pulse 2s infinite;
+        }
+
+        @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:0.6} }
+
+        .hero-title {
+            font-family: 'Unbounded', sans-serif; font-weight: 900;
+            font-size: clamp(2.8rem, 14vw, 4.5rem);
+            line-height: 0.95; letter-spacing: -0.02em; color: var(--white);
+            margin-bottom: 1.2rem;
+            opacity: 0; animation: fadeSlideUp 0.9s 0.4s forwards;
+        }
+        .hero-title .line-accent { color: var(--accent); display: block; }
+        .hero-title .line-outline { -webkit-text-stroke:1px var(--sand-light); color:transparent; display:block; }
+
+        .hero-subtitle {
+            font-size: 0.9rem; font-weight: 300; line-height: 1.75;
+            color: var(--sand-light); margin-bottom: 2rem;
+            opacity: 0; animation: fadeSlideUp 0.9s 0.6s forwards;
+        }
+
+        .hero-actions {
+            display: flex; flex-direction: column; gap: 0.9rem; align-items: flex-start;
+            opacity: 0; animation: fadeSlideUp 0.9s 0.8s forwards;
+        }
+
+        .btn-primary {
+            font-family:'Unbounded',sans-serif; font-size:0.72rem; font-weight:700;
+            letter-spacing:0.1em; text-transform:uppercase; color:var(--charcoal);
+            background:var(--accent); padding:1rem 2rem; text-decoration:none;
+            transition:all 0.25s; position:relative; overflow:hidden;
+            width:100%; text-align:center; display:block;
+        }
+        .btn-primary::after { content:''; position:absolute; inset:0; background:var(--sand); transform:translateX(-100%); transition:transform 0.3s; }
+        .btn-primary:active::after { transform:translateX(0); }
+        .btn-primary span { position:relative; z-index:1; }
+
+        .btn-secondary {
+            font-size:0.85rem; font-weight:500; letter-spacing:0.1em;
+            color:var(--sand-light); text-decoration:none;
+            display:flex; align-items:center; gap:0.5rem; padding:0.4rem 0;
+        }
+        .btn-secondary::after { content:'→'; }
+
+        /* SECTIONS */
+        section { padding: 3.5rem 1.5rem; }
+
+        .section-tag {
+            font-family:'Unbounded',sans-serif; font-size:0.58rem; font-weight:600;
+            letter-spacing:0.25em; text-transform:uppercase; color:var(--accent);
+            margin-bottom:0.8rem; display:block;
+        }
+        .section-title {
+            font-family:'Unbounded',sans-serif; font-weight:800;
+            font-size:clamp(1.6rem,7vw,2.8rem); line-height:1.1;
+            color:var(--white); margin-bottom:1.5rem;
+        }
+
+        /* MISSION */
+        #mission { background:var(--olive-dark); display:flex; flex-direction:column; gap:2.5rem; }
+        .mission-text p { font-size:0.9rem; line-height:1.85; color:var(--sand-light); opacity:0.85; margin-bottom:1rem; font-weight:300; }
+        .mission-features { display:flex; flex-direction:column; gap:0.8rem; }
+        .feature-item {
+            display:grid; grid-template-columns:44px 1fr; gap:1rem; align-items:start;
+            padding:1.2rem; border:1px solid rgba(200,184,154,0.1);
+            background:rgba(245,240,232,0.03); transition:border-color 0.3s;
+        }
+        .feature-item:active { border-color:rgba(212,134,42,0.4); }
+        .feature-icon {
+            width:44px; height:44px; background:rgba(212,134,42,0.15);
+            border:1px solid rgba(212,134,42,0.3); display:flex;
+            align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;
+        }
+        .feature-title { font-family:'Unbounded',sans-serif; font-size:0.74rem; font-weight:600; color:var(--sand); margin-bottom:0.3rem; }
+        .feature-desc { font-size:0.82rem; line-height:1.65; color:var(--muted); font-weight:300; }
+
+        /* CATALOG */
+        #catalog { background:var(--charcoal); }
+        .catalog-header { display:flex; flex-direction:column; gap:1.5rem; margin-bottom:2rem; }
+        .catalog-filter { display:flex; gap:0.4rem; flex-wrap:wrap; }
+        .filter-btn {
+            font-size:0.7rem; font-weight:500; letter-spacing:0.08em;
+            text-transform:uppercase; color:var(--muted); background:transparent;
+            border:1px solid rgba(200,184,154,0.15); padding:0.5rem 1rem;
+            cursor:pointer; transition:all 0.2s; -webkit-tap-highlight-color:transparent;
+        }
+        .filter-btn.active, .filter-btn:active { color:var(--charcoal); background:var(--sand); border-color:var(--sand); }
+
+        .products-grid { display:flex; flex-direction:column; gap:1px; }
+
+        .product-card {
+            background:var(--olive-dark); position:relative; overflow:hidden;
+            cursor:pointer; display:flex; flex-direction:row; min-height:155px;
+        }
+        .product-img-wrap {
+            width:135px; flex-shrink:0;
+            display:flex; align-items:center; justify-content:center;
+            padding:1.2rem; position:relative;
+            background:rgba(45,50,40,0.5);
+        }
+        .product-svg { width:85px; }
+        .product-badge {
+            position:absolute; top:0.5rem; left:0.5rem;
+            font-family:'Unbounded',sans-serif; font-size:0.45rem; font-weight:700;
+            letter-spacing:0.1em; text-transform:uppercase;
+            padding:0.2rem 0.45rem; background:var(--accent); color:var(--charcoal);
+        }
+        .product-info {
+            flex:1; padding:1.1rem 1rem; display:flex;
+            flex-direction:column; justify-content:center;
+            border-left:1px solid rgba(200,184,154,0.08);
+        }
+        .product-category { font-size:0.57rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); margin-bottom:0.25rem; }
+        .product-name { font-family:'Unbounded',sans-serif; font-size:0.78rem; font-weight:600; color:var(--sand-light); margin-bottom:0.55rem; line-height:1.3; }
+        .product-features { display:flex; gap:0.3rem; flex-wrap:wrap; }
+        .product-tag { font-size:0.54rem; letter-spacing:0.06em; color:var(--muted); background:rgba(200,184,154,0.07); border:1px solid rgba(200,184,154,0.1); padding:0.12rem 0.38rem; }
+        .product-cta {
+            display:inline-block; margin-top:0.75rem;
+            font-family:'Unbounded',sans-serif; font-size:0.54rem; font-weight:700;
+            letter-spacing:0.1em; text-transform:uppercase;
+            color:var(--charcoal); background:var(--accent);
+            padding:0.38rem 0.75rem; border:none; cursor:pointer;
+            -webkit-tap-highlight-color:transparent; align-self:flex-start;
+        }
+        .product-overlay { display:none; }
+
+        /* STATS */
+        .stats-banner {
+            background:var(--olive); padding:2.5rem 1.5rem;
+            display:grid; grid-template-columns:1fr 1fr; gap:2rem 1rem;
+            position:relative; overflow:hidden;
+        }
+        .stats-banner::before {
+            content:'АДАПТИВ'; position:absolute;
+            font-family:'Unbounded',sans-serif; font-size:40vw; font-weight:900;
+            color:rgba(0,0,0,0.06); top:50%; left:50%;
+            transform:translate(-50%,-50%); white-space:nowrap; pointer-events:none;
+        }
+        .stat-block { text-align:center; position:relative; z-index:1; }
+        .stat-block .big-num {
+            font-family:'Unbounded',sans-serif; font-size:clamp(1.8rem,9vw,3rem);
+            font-weight:900; color:var(--sand-light); display:block; line-height:1;
+        }
+        .stat-block .big-num sup { font-size:0.4em; color:var(--accent); }
+        .stat-block .stat-text { font-size:0.6rem; letter-spacing:0.08em; text-transform:uppercase; color:rgba(232,221,208,0.6); margin-top:0.4rem; display:block; }
+
+        /* PROCESS */
+        #process { background:var(--cream); }
+        #process .section-title { color:var(--charcoal); }
+        .process-steps { display:flex; flex-direction:column; margin-top:2rem; }
+        .step {
+            padding:1.4rem 0.5rem 1.4rem 0;
+            display:grid; grid-template-columns:52px 1fr; gap:1rem; align-items:start;
+        }
+        .step:not(:last-child) { border-bottom:1px solid rgba(74,82,64,0.12); }
+        .step-number {
+            width:48px; height:48px; background:var(--olive-dark); color:var(--sand);
+            font-family:'Unbounded',sans-serif; font-size:0.82rem; font-weight:900;
+            display:flex; align-items:center; justify-content:center;
+            border:2px solid var(--accent); flex-shrink:0;
+        }
+        .step-title { font-family:'Unbounded',sans-serif; font-size:0.78rem; font-weight:700; color:var(--olive-dark); margin-bottom:0.45rem; }
+        .step-desc { font-size:0.84rem; line-height:1.7; color:var(--muted); font-weight:300; }
+
+        /* STORIES */
+        #stories { background:var(--charcoal); }
+        .testimonials-grid { display:flex; flex-direction:column; gap:1px; margin-top:2.5rem; }
+        .testimonial {
+            background:var(--olive-dark); padding:1.8rem 1.5rem;
+            position:relative; overflow:hidden;
+        }
+        .testimonial::before {
+            content:'"'; position:absolute; top:-1.5rem; left:1rem;
+            font-family:'Unbounded',sans-serif; font-size:7rem;
+            color:rgba(212,134,42,0.07); line-height:1;
+        }
+        .testimonial-rating { display:flex; align-items:center; gap:0.5rem; margin-bottom:1rem; }
+        .rating-stars { color:var(--accent); font-size:0.85rem; letter-spacing:0.08em; }
+        .rating-bar { flex:1; height:3px; background:rgba(200,184,154,0.15); border-radius:2px; overflow:hidden; }
+        .rating-bar-fill { height:100%; width:95%; background:var(--accent); }
+        .testimonial-text { font-size:0.9rem; line-height:1.85; color:var(--sand-light); font-style:italic; font-weight:300; position:relative; z-index:1; margin-bottom:1.4rem; }
+        .testimonial-author { display:flex; align-items:center; gap:0.9rem; }
+        .author-avatar {
+            width:40px; height:40px; background:var(--accent);
+            display:flex; align-items:center; justify-content:center;
+            font-family:'Unbounded',sans-serif; font-weight:900; font-size:0.72rem;
+            color:var(--charcoal); flex-shrink:0;
+        }
+        .author-name { font-family:'Unbounded',sans-serif; font-size:0.67rem; font-weight:700; color:var(--sand); display:block; }
+        .author-role { font-size:0.64rem; color:var(--muted); margin-top:0.1rem; line-height:1.4; }
+        .testimonial-visual { display:none; }
+        .testimonial:first-child { display:block; }
+
+        /* CONTACT */
+        #contact { background:var(--olive-dark); display:flex; flex-direction:column; gap:2.5rem; }
+        .contact-intro p { font-size:0.88rem; line-height:1.85; color:var(--sand-light); font-weight:300; margin-bottom:1rem; }
+        .contact-info { display:flex; flex-direction:column; gap:0.75rem; margin-top:1.5rem; }
+        .contact-row { display:flex; align-items:flex-start; gap:0.8rem; font-size:0.84rem; color:var(--muted); }
+        .contact-row strong { font-family:'Unbounded',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); min-width:68px; padding-top:0.15rem; }
+        .contact-form { display:flex; flex-direction:column; gap:1rem; }
+        .form-row { display:flex; flex-direction:column; gap:1rem; }
+        .form-group { display:flex; flex-direction:column; gap:0.4rem; }
+        .form-group label { font-size:0.64rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--muted); }
+        .form-group input, .form-group select, .form-group textarea {
+            background:rgba(245,240,232,0.04); border:1px solid rgba(200,184,154,0.15);
+            color:var(--sand-light); font-family:'Raleway',sans-serif;
+            font-size:1rem; /* 16px prevents iOS zoom */
+            padding:0.85rem 1rem; outline:none;
+            transition:border-color 0.25s; width:100%;
+            appearance:none; -webkit-appearance:none; border-radius:0;
+        }
+        .form-group select option { background:var(--charcoal); }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color:var(--accent); background:rgba(212,134,42,0.05);
+        }
+        .form-group textarea { resize:vertical; min-height:100px; }
+        .form-submit {
+            font-family:'Unbounded',sans-serif; font-size:0.72rem; font-weight:700;
+            letter-spacing:0.12em; text-transform:uppercase; color:var(--charcoal);
+            background:var(--accent); border:none; padding:1rem 2rem; cursor:pointer;
+            width:100%; margin-top:0.5rem; transition:background 0.25s;
+            -webkit-tap-highlight-color:transparent; border-radius:0;
+        }
+        .form-submit:active { background:var(--sand); }
+
+        /* FOOTER */
+        footer { background:var(--charcoal); border-top:1px solid rgba(200,184,154,0.08); padding:3rem 1.5rem 2rem; }
+        .footer-top { display:flex; flex-direction:column; gap:0; margin-bottom:2.5rem; }
+        .footer-brand { margin-bottom:2rem; }
+        .footer-brand .nav-logo { display:block; margin-bottom:0.8rem; }
+        .footer-brand p { font-size:0.82rem; line-height:1.75; color:var(--muted); font-weight:300; }
+        .footer-col { border-top:1px solid rgba(200,184,154,0.08); }
+        .footer-col-header {
+            display:flex; align-items:center; justify-content:space-between;
+            padding:1.1rem 0; cursor:pointer; -webkit-tap-highlight-color:transparent;
+        }
+        .footer-col h4 { font-family:'Unbounded',sans-serif; font-size:0.58rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--sand); }
+        .footer-col-arrow { font-size:1.1rem; color:var(--accent); transition:transform 0.3s; line-height:1; }
+        .footer-col.open .footer-col-arrow { transform:rotate(45deg); }
+        .footer-col ul { list-style:none; display:flex; flex-direction:column; gap:0; max-height:0; overflow:hidden; transition:max-height 0.35s ease; }
+        .footer-col.open ul { max-height:220px; padding-bottom:1rem; }
+        .footer-col ul li a { font-size:0.84rem; color:var(--muted); text-decoration:none; display:block; padding:0.35rem 0; }
+        .footer-col ul li a:active { color:var(--accent); }
+        .footer-bottom { display:flex; flex-direction:column; align-items:center; gap:1rem; padding-top:2rem; border-top:1px solid rgba(200,184,154,0.08); text-align:center; }
+        .footer-bottom p { font-size:0.68rem; color:var(--muted); opacity:0.6; line-height:1.7; }
+        .ukraine-flag { display:flex; align-items:center; gap:0.5rem; font-size:0.72rem; color:var(--muted); }
+        .ukraine-flag .flag { display:flex; flex-direction:column; width:22px; }
+        .ukraine-flag .flag span:first-child { background:#0057B7; height:5px; display:block; }
+        .ukraine-flag .flag span:last-child { background:#FFD700; height:5px; display:block; }
+
+        /* STICKY CTA */
+        .sticky-cta {
+            position:fixed; bottom:0; left:0; right:0; z-index:90;
+            display:flex; align-items:stretch; height:56px;
+            box-shadow:0 -4px 20px rgba(0,0,0,0.4);
+            transition:transform 0.3s;
+        }
+        .sticky-cta.hidden { transform:translateY(100%); }
+        .sticky-cta a:first-child {
+            flex:1; background:var(--accent);
+            font-family:'Unbounded',sans-serif; font-size:0.65rem; font-weight:700;
+            letter-spacing:0.1em; text-transform:uppercase; color:var(--charcoal);
+            display:flex; align-items:center; justify-content:center; text-decoration:none;
+            -webkit-tap-highlight-color:transparent;
+        }
+        .sticky-cta a:last-child {
+            width:56px; background:var(--olive-dark);
+            border-left:1px solid rgba(200,184,154,0.15);
+            display:flex; align-items:center; justify-content:center;
+            font-size:1.3rem; text-decoration:none; -webkit-tap-highlight-color:transparent;
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeSlideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        .reveal { opacity:0; transform:translateY(22px); transition:opacity 0.6s, transform 0.6s; }
+        .reveal.visible { opacity:1; transform:translateY(0); }
+
+        /* TABLET & DESKTOP */
+        @media (min-width:540px) {
+            .products-grid { display:grid; grid-template-columns:1fr 1fr; gap:1px; }
+            .product-card { flex-direction:column; min-height:unset; aspect-ratio:3/4; }
+            .product-img-wrap { width:auto; flex:1; padding:2rem; background:none; }
+            .product-svg { width:120px; }
+            .product-info { border-left:none; border-top:1px solid rgba(200,184,154,0.08); padding:1.2rem 1.5rem 1.5rem; }
+            .product-cta { display:none; }
+            .product-overlay { display:flex; position:absolute; inset:0; background:rgba(212,134,42,0.12); backdrop-filter:blur(2px); align-items:center; justify-content:center; opacity:0; transition:opacity 0.3s; }
+            .product-card:hover .product-overlay { opacity:1; }
+            .overlay-btn {
+                font-family:'Unbounded',sans-serif; font-size:0.65rem; font-weight:700;
+                letter-spacing:0.12em; text-transform:uppercase; color:var(--charcoal);
+                background:var(--accent); padding:0.8rem 1.8rem; border:none; cursor:pointer;
+                transform:translateY(8px); transition:transform 0.3s;
+            }
+            .product-card:hover .overlay-btn { transform:translateY(0); }
+        }
+
+        @media (min-width:768px) {
+            body { padding-bottom:0; }
+            nav { padding:1.2rem 2.5rem; }
+            .nav-links { display:flex; gap:2.5rem; list-style:none; }
+            .nav-links a { font-size:0.78rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--sand-light); text-decoration:none; opacity:0.75; transition:opacity 0.2s, color 0.2s; }
+            .nav-links a:hover { opacity:1; color:var(--accent); }
+            .nav-cta { display:block; font-family:'Unbounded',sans-serif; font-size:0.65rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--charcoal); background:var(--accent); padding:0.6rem 1.4rem; text-decoration:none; transition:background 0.25s; }
+            .hamburger { display:none; }
+            .hero { flex-direction:row; min-height:100vh; }
+            .hero-right { height:auto; flex:1; order:0; }
+            .hero-illustration { width:60%; max-width:280px; }
+            .hero-stats-row { display:none; }
+            .hero-left { flex:1; padding:8rem 3rem 4rem; }
+            .hero-actions { flex-direction:row; }
+            .btn-primary { width:auto; display:inline-block; }
+            section { padding:5rem 3rem; }
+            #mission { flex-direction:row; gap:5rem; }
+            .mission-features { gap:1.5rem; }
+            .process-steps { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+            .step { grid-template-columns:1fr; text-align:center; border-bottom:none !important; padding:1.5rem; }
+            .step-number { margin:0 auto 1.2rem; }
+            #contact { flex-direction:row; gap:5rem; }
+            .form-row { flex-direction:row; }
+            .footer-top { display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:4rem; }
+            .footer-brand { margin-bottom:0; }
+            .footer-col { border-top:none; }
+            .footer-col-header { padding:0 0 1.2rem 0; }
+            .footer-col-arrow { display:none; }
+            .footer-col ul { max-height:none !important; padding-bottom:0 !important; }
+            .footer-bottom { flex-direction:row; text-align:left; }
+            .sticky-cta { display:none; }
+        }
+    </style>
+</head>
+<body>
+
+<nav id="navbar">
+    <a href="#" class="nav-logo">АД<span>А</span>ПТИВ</a>
+    <ul class="nav-links">
+        <li><a href="#mission">Місія</a></li>
+        <li><a href="#catalog">Каталог</a></li>
+        <li><a href="#process">Процес</a></li>
+        <li><a href="#stories">Історії</a></li>
+        <li><a href="#contact">Контакт</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Замовити вимір</a>
+    <button class="hamburger" id="hamburger" aria-label="Меню">
+        <span></span><span></span><span></span>
+    </button>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+    <button class="mobile-nav-close" id="mobileClose">✕</button>
+    <a href="#mission" class="mobile-link">Місія</a>
+    <a href="#catalog" class="mobile-link">Каталог</a>
+    <a href="#process" class="mobile-link">Процес</a>
+    <a href="#stories" class="mobile-link">Історії</a>
+    <a href="#contact" class="mobile-link">Контакт</a>
+    <a href="#contact" class="mobile-link mobile-nav-cta">Замовити вимір →</a>
+</div>
+
+<section class="hero" id="home">
+    <div class="hero-right">
+        <div class="hero-bg-pattern"></div>
+        <svg class="hero-illustration" viewBox="0 0 340 440" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M95 140 L65 165 L55 220 L75 225 L80 200 L80 340 L260 340 L260 200 L265 225 L285 220 L275 165 L245 140" fill="#4a5240" stroke="#7a8a6a" stroke-width="1.5"/>
+            <path d="M95 140 L65 165 L55 220 L75 225 L95 185 L95 140Z" fill="#3d4534"/>
+            <path d="M245 140 L275 165 L285 220 L265 225 L245 185 L245 140Z" fill="#3d4534"/>
+            <path d="M145 130 Q170 145 195 130 L200 120 Q170 110 140 120Z" fill="#2d3228"/>
+            <rect x="215" y="191" width="30" height="8" rx="2" fill="blue" opacity="0.8"/>
+            <rect x="215" y="199" width="30" height="8" rx="2" fill="yellow" opacity="0.8"/>
+            <line x1="170" y1="130" x2="170" y2="300" stroke="#c8b89a" stroke-width="2" stroke-dasharray="8 4"/>
+            <circle cx="170" cy="175" r="5" fill="#c8b89a"/>
+            <circle cx="170" cy="205" r="5" fill="#c8b89a"/>
+            <circle cx="170" cy="235" r="5" fill="#c8b89a"/>
+            <circle cx="170" cy="265" r="5" fill="#c8b89a"/>
+            <rect x="115" y="210" width="45" height="50" rx="2" fill="none" stroke="#7a8a6a" stroke-width="1.5"/>
+            <line x1="115" y1="225" x2="160" y2="225" stroke="#7a8a6a" stroke-width="1"/>
+            <rect x="110" y="340" width="55" height="90" rx="2" fill="#3d4534" stroke="#7a8a6a" stroke-width="1"/>
+            <rect x="175" y="340" width="55" height="90" rx="2" fill="#3d4534" stroke="#7a8a6a" stroke-width="1"/>
+            <rect x="110" y="380" width="55" height="8" rx="2" fill="#d4862a" opacity="0.6"/>
+            <ellipse cx="170" cy="95" rx="32" ry="38" fill="#c8b89a" stroke="#7a8a6a" stroke-width="1"/>
+        </svg>
+        <div class="hero-stats-row">
+            <div class="hero-stat-item"><span class="stat-num-small">1200+</span><span class="stat-label-small">Комплектів</span></div>
+            <div class="hero-stat-item"><span class="stat-num-small">47</span><span class="stat-label-small">Госпіталів</span></div>
+            <div class="hero-stat-item"><span class="stat-num-small">98%</span><span class="stat-label-small">Задоволені</span></div>
+        </div>
+    </div>
+    <div class="hero-left">
+        <span class="hero-badge">Адаптивний одяг для захисників</span>
+        <h1 class="hero-title">
+            <span>ОДЯГ</span>
+            <span class="line-accent">ЩО</span>
+            <span class="line-outline">ВІДНОВЛЮЄ</span>
+        </h1>
+        <p class="hero-subtitle">Ми створюємо спеціалізований адаптивний одяг для поранених військовослужбовців — зручний, функціональний і гідний тих, хто захищає Україну.</p>
+        <div class="hero-actions">
+            <a href="#catalog" class="btn-primary"><span>Переглянути каталог</span></a>
+            <a href="#process" class="btn-secondary">Дізнатися більше</a>
+        </div>
+    </div>
+</section>
+
+<section id="mission">
+    <div class="mission-text reveal">
+        <span class="section-tag">Наша місія</span>
+        <h2 class="section-title">Функціональність<br>і гідність — разом</h2>
+        <p>Кожен поранений захисник заслуговує на одяг, який відповідає його потребам під час реабілітації та повсякденного життя. Стандартний одяг часто не враховує особливостей після ампутацій, гіпсу чи медичних пристроїв.</p>
+        <p>Команда "АДАПТИВ" об'єднала дизайнерів, ортопедів та ветеранів для створення одягу, що поєднує медичну функціональність із сучасним стилем та почуттям власної гідності.</p>
+    </div>
+    <div class="mission-features reveal">
+        <div class="feature-item">
+            <div class="feature-icon">🧲</div>
+            <div><div class="feature-title">Магнітні застібки</div><div class="feature-desc">Замінюють традиційні ґудзики та змійки — одягти одяг можна однією рукою за секунди</div></div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">✂️</div>
+            <div><div class="feature-title">Адаптивні крої</div><div class="feature-desc">Розширені відкриття рукавів та штанин для протезів, гіпсу та медичних пристроїв</div></div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🩺</div>
+            <div><div class="feature-title">Медична сумісність</div><div class="feature-desc">Спеціальні отвори для катетерів, крапельниць та систем моніторингу</div></div>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🌿</div>
+            <div><div class="feature-title">Гіпоалергенні матеріали</div><div class="feature-desc">Органічна бавовна та бамбукові тканини, бережливі до пошкодженої шкіри</div></div>
+        </div>
+    </div>
+</section>
+
+<section id="catalog">
+    <div class="catalog-header reveal">
+        <div>
+            <span class="section-tag">Каталог</span>
+            <h2 class="section-title">Колекція<br>«ВІДНОВЛЕННЯ»</h2>
+        </div>
+        <div class="catalog-filter">
+            <button class="filter-btn active" data-filter="all">Все</button>
+            <button class="filter-btn" data-filter="upper">Верх</button>
+            <button class="filter-btn" data-filter="lower">Низ</button>
+            <button class="filter-btn" data-filter="winter">Зима</button>
+        </div>
+    </div>
+    <div class="products-grid" id="productsGrid">
+        <div class="product-card" data-cat="suit">
+            <div class="product-img-wrap">
+                <span class="product-badge">Комплект</span>
+                <svg class="product-svg" viewBox="-100 -50 400 550" fill="none">
+                    <g transform="translate(0,270)"><path d="M15 0 L25 240 L65 240 L90 60 L117 240 L155 240 L165 0Z" fill="#4a5240"/><rect x="30" y="110" width="40" height="6" rx="2" fill="#d4862a" opacity="0.8"/></g>
+                    <g transform="translate(-60,-35)"><path d="M75 105 L45 135 L37.5 195 L67.5 199.5 L72 172.5 L72 292.5 L228 292.5 L228 172.5 L232.5 199.5 L262.5 195 L255 135 L225 105" fill="#4a5240"/><path d="M75 105 L45 135 L15 295 L50 290 L67.5 199.5 L82.5 165 L82.5 105Z" fill="#3d4534"/><path d="M225 105 L255 135 L285 290 L250 290 L232.5 199.5 L217.5 165 L217.5 105Z" fill="#3d4534"/><line x1="150" y1="105" x2="150" y2="285" stroke="#c8b89a" stroke-width="2.25" stroke-dasharray="9 4.5"/><circle cx="150" cy="157.5" r="5.25" fill="#c8b89a"/><circle cx="150" cy="187.5" r="5.25" fill="#c8b89a"/><circle cx="150" cy="217.5" r="5.25" fill="#c8b89a"/><rect x="90" y="165" width="33" height="9" rx="2" fill="#d4862a" opacity="0.9"/><rect x="175" y="165" width="33" height="9" rx="2" fill="#d4862a" opacity="0.9"/></g>
+                </svg>
+            </div>
+            <div class="product-info">
+                <div class="product-category">Верхній одяг</div>
+                <div class="product-name">Адаптивна термобілизна</div>
+                <div class="product-features"><span class="product-tag">Velcro</span><span class="product-tag">Змінний рукав</span><span class="product-tag">Комплект</span></div>
+                <button class="product-cta">Детальніше →</button>
+            </div>
+            <div class="product-overlay"><button class="overlay-btn">Детальніше</button></div>
+        </div>
+        <div class="product-card" data-cat="upper">
+            <div class="product-img-wrap">
+                <span class="product-badge" style="background:var(--olive);">Новинка</span>
+                <svg class="product-svg" viewBox="0 0 200 220" fill="none">
+                    <path d="M55 75 L40 95 L38 150 L62 153 L65 120 L65 195 L135 195 L135 120 L138 153 L162 150 L160 95 L145 75" fill="#5a6350"/>
+                    <path d="M55 75 L40 95 L38 150 L62 153 L70 120 L70 75Z" fill="#4a5240"/>
+                    <path d="M145 75 L160 95 L162 150 L138 153 L130 120 L130 75Z" fill="#4a5240"/>
+                    <path d="M80 68 Q100 78 120 68 L122 62 Q100 53 78 62Z" fill="#2d3228"/>
+                    <rect x="75" y="110" width="50" height="40" rx="1" fill="none" stroke="#d4862a" stroke-width="1.5"/>
+                    <rect x="75" y="110" width="50" height="14" fill="rgba(212,134,42,0.15)"/>
+                    <rect x="133" y="95" width="23" height="5" rx="2" fill="#d4862a" opacity="0.9"/>
+                    <rect x="45" y="95" width="23" height="5" rx="2" fill="#d4862a" opacity="0.9"/>
+                </svg>
+            </div>
+            <div class="product-info">
+                <div class="product-category">Верхній одяг</div>
+                <div class="product-name">Адаптивний світшот</div>
+                <div class="product-features"><span class="product-tag">Катетер-порт</span><span class="product-tag">Полегш. надягання</span><span class="product-tag">Антибакт.</span></div>
+                <button class="product-cta">Детальніше →</button>
+            </div>
+            <div class="product-overlay"><button class="overlay-btn">Детальніше</button></div>
+        </div>
+        <div class="product-card" data-cat="lower">
+            <div class="product-img-wrap">
+                <svg class="product-svg" viewBox="0 0 200 220" fill="none">
+                    <rect x="55" y="35" width="90" height="18" rx="3" fill="#3d4534"/>
+                    <path d="M55 53 L50 230 L95 230 L100 120 L105 230 L150 230 L145 53Z" fill="#4a5240"/>
+                    <line x1="55" y1="45" x2="145" y2="45" stroke="#7a8a6a" stroke-width="1" stroke-dasharray="6 3"/>
+                    <rect x="50" y="95" width="45" height="7" rx="2" fill="#d4862a" opacity="0.9"/>
+                    <rect x="105" y="95" width="45" height="7" rx="2" fill="#d4862a" opacity="0.9"/>
+                    <circle cx="95" cy="42" r="3" fill="#c8b89a"/>
+                    <circle cx="105" cy="42" r="3" fill="#c8b89a"/>
+                    <line x1="95" y1="42" x2="72" y2="53" stroke="#c8b89a" stroke-width="1"/>
+                    <line x1="105" y1="42" x2="128" y2="53" stroke="#c8b89a" stroke-width="1"/>
+                </svg>
+            </div>
+            <div class="product-info">
+                <div class="product-category">Реабілітаційний одяг</div>
+                <div class="product-name">Адаптивні штани</div>
+                <div class="product-features"><span class="product-tag">Відкр. бічний шов</span><span class="product-tag">Еластик. пояс</span><span class="product-tag">Легкий матеріал</span></div>
+                <button class="product-cta">Детальніше →</button>
+            </div>
+            <div class="product-overlay"><button class="overlay-btn">Детальніше</button></div>
+        </div>
+    </div>
+</section>
+
+<div class="stats-banner">
+    <div class="stat-block reveal"><span class="big-num" data-target="1200">0<sup>+</sup></span><span class="stat-text">Одиниць виготовлено</span></div>
+    <div class="stat-block reveal"><span class="big-num" data-target="47">0</span><span class="stat-text">Медзакладів-партнерів</span></div>
+    <div class="stat-block reveal"><span class="big-num" data-target="98">0<sup>%</sup></span><span class="stat-text">Задоволеність</span></div>
+    <div class="stat-block reveal"><span class="big-num" data-target="24">0</span><span class="stat-text">Регіони України</span></div>
+</div>
+
+<section id="process">
+    <div class="reveal">
+        <span class="section-tag" style="color:var(--olive-dark);">Процес</span>
+        <h2 class="section-title" style="color:var(--charcoal);">Від виміру<br>до вашого гардероба</h2>
+    </div>
+    <div class="process-steps">
+        <div class="step reveal"><div class="step-number">01</div><div><h3 class="step-title">Консультація</h3><p class="step-desc">Зустріч з нашим спеціалістом або онлайн-сесія для з'ясування медичних потреб та побажань</p></div></div>
+        <div class="step reveal"><div class="step-number">02</div><div><h3 class="step-title">Вимірювання</h3><p class="step-desc">Точні виміри з урахуванням особливостей травми, протезів та реабілітаційних пристроїв</p></div></div>
+        <div class="step reveal"><div class="step-number">03</div><div><h3 class="step-title">Пошиття</h3><p class="step-desc">Виготовлення в Україні кваліфікованими швачками з 5–10 річним досвідом адаптивного шиття</p></div></div>
+        <div class="step reveal"><div class="step-number">04</div><div><h3 class="step-title">Доставка</h3><p class="step-desc">Безкоштовна доставка в медзаклади та реабілітаційні центри по всій Україні</p></div></div>
+    </div>
+</section>
+
+<section id="stories">
+    <span class="section-tag reveal">Голоси захисників</span>
+    <h2 class="section-title reveal">Реальні<br>Історії</h2>
+    <div class="testimonials-grid">
+        <div class="testimonial reveal">
+            <div class="testimonial-rating"><span class="rating-stars">★★★★★</span><div class="rating-bar"><div class="rating-bar-fill"></div></div></div>
+            <p class="testimonial-text">«Після операції я думав, що нормальне одягання — це в минулому. Куртка "ТАКТИК-А" змінила все. Вдягаю за 2 хвилини, виглядаю як людина — і це дуже важливо психологічно, коли ти в реабілітації.»</p>
+            <div class="testimonial-author"><div class="author-avatar">СК</div><div><span class="author-name">Сергій Коваленко</span><span class="author-role">Старший сержант, 3 рота<br>Реабілітаційний центр Київ</span></div></div>
+        </div>
+        <div class="testimonial reveal">
+            <p class="testimonial-text">«Мама купила мені ваші штани — нарешті можна переодягнутись без чужої допомоги. Незалежність у таких дрібницях — це і є свобода.»</p>
+            <div class="testimonial-author"><div class="author-avatar">ОМ</div><div><span class="author-name">Олексій Мороз</span><span class="author-role">Солдат, 54 бригада / м. Дніпро</span></div></div>
+        </div>
+        <div class="testimonial reveal">
+            <p class="testimonial-text">«Як лікар, рекомендую цей одяг всім пораненим на відділенні. Вікна для катетерів та крапельниць рятують нам час і нерви при процедурах.»</p>
+            <div class="testimonial-author"><div class="author-avatar">НГ</div><div><span class="author-name">Наталія Гриценко</span><span class="author-role">Завідувач відділення травматології, Харків</span></div></div>
+        </div>
+    </div>
+</section>
+
+<section id="contact">
+    <div class="contact-intro reveal">
+        <span class="section-tag">Зв'язатись</span>
+        <h2 class="section-title">Замовити<br>або дізнатись<br>більше</h2>
+        <p>Заповніть форму, і наш спеціаліст зв'яжеться з вами протягом 24 годин. Також ми виїжджаємо до медзакладів і реабілітаційних центрів по всій Україні.</p>
+        <p>Для медичних установ та госпіталів — спеціальні умови партнерства та гуртові замовлення.</p>
+        <div class="contact-info">
+            <div class="contact-row"><strong>Телефон</strong> +38 (099) 123-45-67</div>
+            <div class="contact-row"><strong>Email</strong> info@adaptiv.ua</div>
+            <div class="contact-row"><strong>Адреса</strong> м. Київ, вул. Героїв, 14</div>
+            <div class="contact-row"><strong>Графік</strong> Пн–Пт: 09:00–18:00</div>
+        </div>
+    </div>
+    <form class="contact-form reveal" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+            <div class="form-group"><label>Ваше ім'я</label><input type="text" placeholder="Ім'я та прізвище" required></div>
+            <div class="form-group"><label>Телефон</label><input type="tel" placeholder="+38 (0__) ___-__-__"></div>
+        </div>
+        <div class="form-group">
+            <label>Тип запиту</label>
+            <select><option>Індивідуальне замовлення</option><option>Замовлення для госпіталю</option><option>Волонтерська допомога</option><option>Партнерство</option><option>Інше</option></select>
+        </div>
+        <div class="form-group"><label>Деталі</label><textarea placeholder="Опишіть ваші потреби, тип травми, розміри або кількість одиниць..."></textarea></div>
+        <button type="submit" class="form-submit" id="submitBtn"><span id="submitText">Надіслати запит →</span></button>
+        <p style="font-size:0.7rem;color:var(--muted);margin-top:0.5rem;line-height:1.5;">Вся інформація конфіденційна та використовується виключно для обробки вашого замовлення</p>
+    </form>
+</section>
+
+<footer>
+    <div class="footer-top">
+        <div class="footer-brand">
+            <a href="#" class="nav-logo">АД<span>А</span>ПТИВ</a>
+            <p>Адаптивний одяг для поранених військовослужбовців. Виготовляємо в Україні. Доставляємо безкоштовно до медичних закладів.</p>
+        </div>
+        <div class="footer-col" id="fc1">
+            <div class="footer-col-header" onclick="toggleFooterCol('fc1')"><h4>Продукція</h4><span class="footer-col-arrow">+</span></div>
+            <ul><li><a href="#">Куртки та жилети</a></li><li><a href="#">Сорочки</a></li><li><a href="#">Штани та шорти</a></li><li><a href="#">Зимова колекція</a></li><li><a href="#">Аксесуари</a></li></ul>
+        </div>
+        <div class="footer-col" id="fc2">
+            <div class="footer-col-header" onclick="toggleFooterCol('fc2')"><h4>Інформація</h4><span class="footer-col-arrow">+</span></div>
+            <ul><li><a href="#">Про нас</a></li><li><a href="#">Наша команда</a></li><li><a href="#">Матеріали та технології</a></li><li><a href="#">Як зробити замір</a></li><li><a href="#">FAQ</a></li></ul>
+        </div>
+        <div class="footer-col" id="fc3">
+            <div class="footer-col-header" onclick="toggleFooterCol('fc3')"><h4>Партнерам</h4><span class="footer-col-arrow">+</span></div>
+            <ul><li><a href="#">Госпіталям</a></li><li><a href="#">Реабілітаційним центрам</a></li><li><a href="#">Волонтерам</a></li><li><a href="#">Гуртові замовлення</a></li><li><a href="#">Пожертвування</a></li></ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2025 АДАПТИВ. Всі права захищені.<br>Зроблено з любов'ю до захисників України.</p>
+        <div class="ukraine-flag"><div class="flag"><span></span><span></span></div>Слава Україні 🇺🇦</div>
+    </div>
+</footer>
+
+<div class="sticky-cta" id="stickyCta">
+    <a href="#contact">Замовити вимір</a>
+    <a href="tel:+380991234567">📞</a>
+</div>
+
+<script>
+    // MOBILE NAV
+    const hamburger = document.getElementById('hamburger');
+    const mobileNav = document.getElementById('mobileNav');
+    const mobileClose = document.getElementById('mobileClose');
+
+    const closeMobileNav = () => { mobileNav.classList.remove('open'); hamburger.classList.remove('active'); };
+    hamburger.addEventListener('click', () => { mobileNav.classList.add('open'); hamburger.classList.add('active'); });
+    mobileClose.addEventListener('click', closeMobileNav);
+    document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', closeMobileNav));
+
+    // SCROLL REVEAL
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((e, i) => { if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), i * 60); observer.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // COUNTER
+    function animateCounter(el, target) {
+        const sup = el.querySelector('sup');
+        const suffix = sup ? `<sup>${sup.textContent}</sup>` : '';
+        let v = 0; const step = Math.ceil(target / 50);
+        const t = setInterval(() => { v = Math.min(v + step, target); el.innerHTML = v + suffix; if (v >= target) clearInterval(t); }, 28);
+    }
+    const statObs = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { animateCounter(e.target.querySelector('.big-num'), parseInt(e.target.querySelector('.big-num').dataset.target)); statObs.unobserve(e.target); } });
+    }, { threshold: 0.4 });
+    document.querySelectorAll('.stat-block').forEach(el => statObs.observe(el));
+
+    // FILTER
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const f = btn.dataset.filter;
+            document.querySelectorAll('.product-card').forEach(c => {
+                const show = f === 'all' || c.dataset.cat === f;
+                c.style.transition = 'opacity 0.3s';
+                if (show) { c.style.opacity = '1'; c.style.display = ''; }
+                else { c.style.opacity = '0'; setTimeout(() => { if (f !== 'all' && c.dataset.cat !== f) c.style.display = 'none'; }, 300); }
+            });
+        });
+    });
+
+    // FOOTER ACCORDION (mobile only)
+    function toggleFooterCol(id) {
+        if (window.innerWidth >= 768) return;
+        document.getElementById(id).classList.toggle('open');
+    }
+
+    // FORM
+    function handleSubmit(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const txt = document.getElementById('submitText');
+        btn.disabled = true; txt.textContent = 'Надсилаємо...'; btn.style.background = 'var(--olive)';
+        setTimeout(() => {
+            txt.textContent = '✓ Запит надіслано!'; btn.style.background = '#2ecc71';
+            setTimeout(() => { txt.textContent = 'Надіслати ще один запит →'; btn.style.background = 'var(--accent)'; btn.disabled = false; e.target.reset(); }, 3500);
+        }, 1500);
+    }
+
+    // NAVBAR SHRINK
+    window.addEventListener('scroll', () => {
+        document.getElementById('navbar').style.padding = window.scrollY > 40 ? '0.7rem 1.5rem' : '1rem 1.5rem';
+    }, { passive: true });
+
+    // STICKY CTA — hide when contact visible
+    const stickyCta = document.getElementById('stickyCta');
+    const ctaObs = new IntersectionObserver(entries => {
+        stickyCta.classList.toggle('hidden', entries[0].isIntersecting);
+    }, { threshold: 0.05 });
+    ctaObs.observe(document.getElementById('contact'));
+</script>
+</body>
+</html>
